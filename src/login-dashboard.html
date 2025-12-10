@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleSense AI Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-50 font-sans">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl">
+            <div class="flex items-center space-x-4">
+                <i class="fas fa-spinner fa-spin text-blue-600 text-3xl"></i>
+                <span class="text-xl font-semibold text-gray-800">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast"
+        class="fixed top-4 right-4 bg-white shadow-lg rounded-lg p-4 transform translate-x-full transition-transform duration-300 z-50 max-w-sm">
+        <div class="flex items-start space-x-3">
+            <i id="toastIcon" class="fas fa-check-circle text-green-500 text-xl mt-1"></i>
+            <div class="flex-1">
+                <p id="toastMessage" class="text-gray-800 font-medium"></p>
+            </div>
+            <button onclick="hideToast()" class="text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white shadow-lg">
+            <div class="p-6">
+                <div class="flex items-center space-x-2 mb-8">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-sparkles text-white text-xl"></i>
+                    </div>
+                    <span class="text-xl font-bold text-blue-600">StyleSense AI</span>
+                </div>
+
+                <nav class="space-y-3" id="sidebarNav">
+                    <a href="#" data-page="dashboard"
+                        class="nav-link flex items-center space-x-3 px-4 py-3 bg-gray-100 rounded-lg text-gray-900">
+                        <i class="fas fa-th-large w-5"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#" data-page="measurement"
+                        class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                        <i class="fas fa-ruler w-5"></i>
+                        <span>AI Body Measurement</span>
+                    </a>
+                    <a href="#" data-page="catalog"
+                        class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                        <i class="fas fa-tshirt w-5"></i>
+                        <span>Apparel Catalog</span>
+                    </a>
+                    <a href="#" data-page="stylist"
+                        class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                        <i class="fas fa-magic w-5"></i>
+                        <span>Mood & Occasion Stylist</span>
+                    </a>
+                    <a href="#" data-page="wardrobe"
+                        class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                        <i class="fas fa-shopping-bag w-5"></i>
+                        <span>My Wardrobe</span>
+                    </a>
+                    <a href="#" data-page="planner"
+                        class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                        <i class="fas fa-calendar-alt w-5"></i>
+                        <span>Outfit Timetable Planner</span>
+                    </a>
+                    <a href="#" data-page="shopping"
+                        class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                        <i class="fas fa-store w-5"></i>
+                        <span>Shopping Hub</span>
+                    </a>
+                    <!-- <a href="#" data-page="profile"
+                        class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                        <i class="fas fa-user-cog w-5"></i>
+                        <span>Profile & Preferences</span>
+                    </a> -->
+                    <a href="#" data-page="notifications"
+                        class="nav-link flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                        <i class="fas fa-bell w-5"></i>
+                        <span>Notifications</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="absolute bottom-0 w-64 p-6 border-t border-gray-200">
+                <a href="#"
+                    class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                    <i class="fas fa-user w-5"></i>
+                    <span id="profileName">Profile</span>
+                </a>
+                <a href="#" onclick="handleLogout(event)"
+                    class="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                    <i class="fas fa-sign-out-alt w-5"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto">
+            <!-- Header -->
+            <header class="bg-white shadow-sm">
+                <div class="flex items-center justify-between px-8 py-4">
+                    <h1 class="text-2xl font-semibold text-gray-800" id="pageTitle">Dashboard</h1>
+                    <div class="flex items-center space-x-4">
+                        <button onclick="fetchNotifications()" class="relative">
+                            <i class="fas fa-bell text-gray-600 text-xl"></i>
+                            <span id="notificationBadge"
+                                class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-xs flex items-center justify-center">0</span>
+                        </button>
+                        <img id="userAvatar" src="https://ui-avatars.com/api/?name=Jane+Doe&background=4F46E5&color=fff"
+                            alt="Profile" class="w-10 h-10 rounded-full cursor-pointer" onclick="toggleProfileMenu()">
+                    </div>
+                </div>
+            </header>
+
+            <!-- Hero Section -->
+            <section class="px-8 py-8">
+                <div
+                    class="bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl p-8 flex items-center justify-between">
+                    <div class="max-w-xl">
+                        <h2 class="text-4xl font-bold text-gray-900 mb-4" id="welcomeMessage">Hello, Jane Doe!</h2>
+                        <p class="text-gray-600 mb-6">Welcome back! Your style journey continues. Discover new outfits,
+                            track your wardrobe, and get personalized recommendations.</p>
+                        <button onclick="exploreWardrobe()"
+                            class="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition shadow-lg">
+                            Explore Your Wardrobe
+                        </button>
+                    </div>
+                    <div class="hidden lg:block">
+                        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&h=300&fit=crop"
+                            alt="Fashion" class="w-80 h-64 object-cover rounded-2xl shadow-xl">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="px-8 py-6">
+                <h3 class="text-2xl font-bold text-gray-900 mb-6">Quick Actions</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <button onclick="uploadPhoto()"
+                        class="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition border border-gray-100">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-upload text-blue-600 text-2xl"></i>
+                        </div>
+                        <h4 class="font-semibold text-gray-900 text-center">Upload Photo for Analysis</h4>
+                    </button>
+
+                    <button onclick="startMeasurement()"
+                        class="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition border border-gray-100">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-expand text-blue-600 text-2xl"></i>
+                        </div>
+                        <h4 class="font-semibold text-gray-900 text-center">Start AI Body Measurement</h4>
+                    </button>
+
+                    <button onclick="generateOutfit()"
+                        class="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition border border-gray-100">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-sparkles text-blue-600 text-2xl"></i>
+                        </div>
+                        <h4 class="font-semibold text-gray-900 text-center">Generate Personalized Outfit</h4>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Activity Overview -->
+            <section class="px-8 py-6 pb-12">
+                <h3 class="text-2xl font-bold text-gray-900 mb-6">Your Activity Overview</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-shopping-bag text-blue-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-3xl font-bold text-gray-900" id="wardrobeCount">0</p>
+                                <p class="text-gray-600 text-sm">Wardrobe Items</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-heart text-blue-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-3xl font-bold text-gray-900" id="outfitCount">0</p>
+                                <p class="text-gray-600 text-sm">Saved Outfits</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-store text-blue-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-3xl font-bold text-gray-900" id="visitCount">0</p>
+                                <p class="text-gray-600 text-sm">Shopping Hub Visits</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- File Input (Hidden) -->
+    <input type="file" id="photoInput" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)">
+    <script src="dashboard.js"></script>
+</body>
+
+</html>
