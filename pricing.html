@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleSense AI - My Wardrobe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 40px;
+            font-weight: 600;
+            color: #4169e1;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #666;
+        }
+
+        .menu-item:hover {
+            background-color: #f0f2f5;
+        }
+
+        .menu-item.active {
+            background-color: #e8eaff;
+            color: #4169e1;
+            font-weight: 500;
+        }
+
+        .menu-icon {
+            width: 20px;
+            text-align: center;
+        }
+
+        .menu-bottom {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 12px;
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 30px;
+            width: calc(100% - 280px);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header-left h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header-left p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #e0e0e0;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 0;
+            cursor: pointer;
+            color: #666;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            color: #4169e1;
+            border-bottom-color: #4169e1;
+            font-weight: 500;
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .item-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .item-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        }
+
+        .item-image {
+            width: 100%;
+            aspect-ratio: 3/4;
+            background: linear-gradient(135deg, #e0e0e0 0%, #f0f0f0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .item-image svg {
+            width: 60px;
+            height: 60px;
+            opacity: 0.3;
+        }
+
+        .item-info {
+            padding: 12px;
+            text-align: center;
+        }
+
+        .item-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .item-category {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .upload-card {
+            border: 2px dashed #ccc;
+            background: #fafafa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .upload-card:hover {
+            border-color: #4169e1;
+            background: #f0f2ff;
+        }
+
+        .upload-icon {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 8px;
+            color: #999;
+        }
+
+        .upload-card p {
+            font-size: 11px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .notification-icon {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 8px;
+            height: 8px;
+            background: #ff4444;
+            border-radius: 50%;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: #333;
+            margin: 5px 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 968px) {
+            .sidebar {
+                transform: translateX(-100%);
+                z-index: 999;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .items-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 15px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .items-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .header-left h1 {
+                font-size: 24px;
+            }
+
+            .tabs {
+                gap: 16px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <button class="menu-toggle" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <div class="logo-icon">✨</div>
+                <span>StyleSense AI</span>
+            </div>
+
+            <nav>
+                <div class="menu-item">
+                    <span class="menu-icon">📊</span>
+                    <span>Dashboard</span>
+                </div>
+                <div class="menu-item">
+                    <span class="menu-icon">📏</span>
+                    <span>AI Height Measurement</span>
+                </div>
+                <div class="menu-item">
+                    <span class="menu-icon">👔</span>
+                    <span>Apparel Catalog</span>
+                </div>
+                <div class="menu-item">
+                    <span class="menu-icon">✨</span>
+                    <span>Mood & Occasion Stylist</span>
+                </div>
+                <div class="menu-item active">
+                    <span class="menu-icon">👗</span>
+                    <span>My Wardrobe</span>
+                </div>
+                <div class="menu-item">
+                    <span class="menu-icon">📅</span>
+                    <span>Outfit Timetable Planner</span>
+                </div>
+                <div class="menu-item">
+                    <span class="menu-icon">🛍</span>
+                    <span>Shopping Hub</span>
+                </div>
+            </nav>
+
+            <div class="menu-bottom">
+                <div class="menu-item">
+                    <span class="menu-icon">👤</span>
+                    <span>Profile & Preferences</span>
+                </div>
+                <div class="menu-item">
+                    <span class="menu-icon">🔔</span>
+                    <span>Notifications</span>
+                </div>
+                <div class="menu-item">
+                    <span class="menu-icon">👤</span>
+                    <span>Profile</span>
+                </div>
+                <div class="menu-item">
+                    <span class="menu-icon">🚪</span>
+                    <span>Logout</span>
+                </div>
+            </div>
+
+            <div class="footer">
+                Made with <strong>Visily</strong>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="header">
+                <div class="header-left">
+                    <h1>My Wardrobe</h1>
+                    <p>Organize your clothing collection. Upload new items and let StyleSense AI categorize them for
+                        you.</p>
+                </div>
+                <div class="user-menu">
+                    <div class="notification-icon">
+                        🔔
+                        <div class="notification-badge"></div>
+                    </div>
+                    <div class="user-avatar"></div>
+                    <button class="upload-btn">
+                        <span>⬆</span>
+                        Upload New Item
+                    </button>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active">All Items</div>
+                <div class="tab">Tops</div>
+                <div class="tab">Bottoms</div>
+                <div class="tab">Shoes</div>
+                <div class="tab">Accessories</div>
+                <div class="tab">Outerwear</div>
+            </div>
+
+            <section class="section">
+                <h2>Tops</h2>
+                <div class="items-grid">
+                    <div class="item-card">
+                        <div class="item-image">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="3" />
+                                <path d="M12 14c-4 0-8 2-8 4v2h16v-2c0-2-4-4-8-4z" />
+                            </svg>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">Classic</div>
+                            <div class="item-category">Tops</div>
+                        </div>
+                    </div>
+                    <div class="item-card">
+                        <div class="item-image">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="3" />
+                                <path d="M12 14c-4 0-8 2-8 4v2h16v-2c0-2-4-4-8-4z" />
+                            </svg>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">Comfy</div>
+                            <div class="item-category">Tops</div>
+                        </div>
+                    </div>
+                    <div class="item-card">
+                        <div class="item-image">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="3" />
+                                <path d="M12 14c-4 0-8 2-8 4v2h16v-2c0-2-4-4-8-4z" />
+                            </svg>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">Light</div>
+                            <div class="item-category">Tops</div>
+                        </div>
+                    </div>
+                    <div class="item-card upload-card">
+                        <div class="upload-icon">⬆</div>
+                        <p>Upload new Tops item<br>Click to add to your wardrobe</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Bottoms</h2>
+                <div class="items-grid">
+                    <div class="item-card">
+                        <div class="item-image">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="3" />
+                                <path d="M12 14c-4 0-8 2-8 4v2h16v-2c0-2-4-4-8-4z" />
+                            </svg>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">Slim</div>
+                            <div class="item-category">Bottoms</div>
+                        </div>
+                    </div>
+                    <div class="item-card">
+                        <div class="item-image">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="3" />
+                                <path d="M12 14c-4 0-8 2-8 4v2h16v-2c0-2-4-4-8-4z" />
+                            </svg>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">Khaki</div>
+                            <div class="item-category">Bottoms</div>
+                        </div>
+                    </div>
+                    <div class="item-card">
+                        <div class="item-image">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="3" />
+                                <path d="M12 14c-4 0-8 2-8 4v2h16v-2c0-2-4-4-8-4z" />
+                            </svg>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">Tailored</div>
+                            <div class="item-category">Bottoms</div>
+                        </div>
+                    </div>
+                    <div class="item-card upload-card">
+                        <div class="upload-icon">⬆</div>
+                        <p>Upload new Bottoms item<br>Click to add to your wardrobe</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Shoes</h2>
+                <div class="items-grid">
+                    <div class="item-card">
+                        <div class="item-image">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="3" />
+                                <path d="M12 14c-4 0-8 2-8 4v2h16v-2c0-2-4-4-8-4z" />
+                            </svg>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">Minimalist</div>
+                            <div class="item-category">Shoes</div>
+                        </div>
+                    </div>
+                    <div class="item-card">
+                        <div class="item-image">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="3" />
+                                <path d="M12 14c-4 0-8 2-8 4v2h16v-2c0-2-4-4-8-4z" />
+                            </svg>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">White</div>
+                            <div class="item-category">Shoes</div>
+                        </div>
+                    </div>
+                    <div class="item-card">
+                        <div class="item-image">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="3" />
+                                <path d="M12 14c-4 0-8 2-8 4v2h16v-2c0-2-4-4-8-4z" />
+                            </svg>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">Brown</div>
+                            <div class="item-category">Shoes</div>
+                        </div>
+                    </div>
+                    <div class="item-card upload-card">
+                        <div class="upload-icon">⬆</div>
+                        <p>Upload new Shoes item<br>Click to add to your wardrobe</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Accessories</h2>
+                <div class="items-grid">
+                    <div class="item-card">
+                        <div class="item-image">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="3" />
+                                <path d="M12 14c-4 0-8 2-8 4v2h16v-2c0-2-4-4-8-4z" />
+                            </svg>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">Delicate</div>
+                            <div class="item-category">Accessories</div>
+                        </div>
+                    </div>
+                    <div class="item-card">
+                        <div class="item-image">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="3" />
+                                <path d="M12 14c-4 0-8 2-8 4v2h16v-2c0-2-4-4-8-4z" />
+                            </svg>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">Bronze</div>
+                            <div class="item-category">Accessories</div>
+                        </div>
+                    </div>
+                    <div class="item-card">
+                        <div class="item-image">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="3" />
+                                <path d="M12 14c-4 0-8 2-8 4v2h16v-2c0-2-4-4-8-4z" />
+                            </svg>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">Winter</div>
+                            <div class="item-category">Accessories</div>
+                        </div>
+                    </div>
+                    <div class="item-card upload-card">
+                        <div class="upload-icon">⬆</div>
+                        <p>Upload new Accessories item<br>Click to add to your wardrobe</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Outerwear</h2>
+                <div class="items-grid">
+                    <div class="item-card">
+                        <div class="item-image">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="3" />
+                                <path d="M12 14c-4 0-8 2-8 4v2h16v-2c0-2-4-4-8-4z" />
+                            </svg>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">Classic</div>
+                            <div class="item-category">Outerwear</div>
+                        </div>
+                    </div>
+                    <div class="item-card">
+                        <div class="item-image">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="3" />
+                                <path d="M12 14c-4 0-8 2-8 4v2h16v-2c0-2-4-4-8-4z" />
+                            </svg>
+                        </div>
+                        <div class="item-info">
+                            <div class="item-name">Elegant</div>
+                            <div class="item-category">Outerwear</div>
+                        </div>
+                    </div>
+                    <div class="item-card upload-card">
+                        <div class="upload-icon">⬆</div>
+                        <p>Upload new Outerwear item<br>Click to add to your wardrobe</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function (event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.menu-toggle');
+
+            if (window.innerWidth <= 968) {
+                if (!sidebar.contains(event.target) && !toggle.contains(event.target)) {
+                    sidebar.classList.remove('active');
+                }
+            }
+        });
+
+        // Handle tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function () {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+
+</html>

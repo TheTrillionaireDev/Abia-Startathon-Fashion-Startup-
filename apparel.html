@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleSense AI - Apparel Catalog</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .loading {
+            animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-sm">SS</span>
+                </div>
+                <h1 class="text-xl font-bold text-gray-900">StyleSense AI</h1>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="relative">
+                    <span class="text-2xl">🔔</span>
+                    <span
+                        class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-xs flex items-center justify-center">3</span>
+                </button>
+                <div class="w-8 h-8 bg-gray-300 rounded-full"></div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 py-6 flex gap-6">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white rounded-lg shadow-sm p-4 h-fit sticky top-20">
+            <nav class="space-y-2 mb-6">
+                <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">
+                    <span>📊</span> Dashboard
+                </a>
+                <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">
+                    <span>🤖</span> AI Height Measurement
+                </a>
+                <a href="#" class="flex items-center gap-3 px-3 py-2 bg-blue-50 text-blue-600 rounded font-medium">
+                    <span>👕</span> Apparel Catalog
+                </a>
+                <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">
+                    <span>👗</span> Recent & Occasion Stylist
+                </a>
+                <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">
+                    <span>💼</span> My Wardrobe
+                </a>
+                <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">
+                    <span>⚙️</span> Outfit Ensemble Planner
+                </a>
+                <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">
+                    <span>🛒</span> Shopping Task
+                </a>
+                <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">
+                    <span>👤</span> Profile & Preferences
+                </a>
+                <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">
+                    <span>🔔</span> Notifications
+                </a>
+            </nav>
+            <div class="pt-4 border-t">
+                <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">
+                    <span>👤</span> Profile
+                </a>
+                <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">
+                    <span>🚪</span> Logout
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1">
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Apparel Catalog</h2>
+                <p class="text-gray-600 mb-6">Explore personalized fashion recommendations tailored just for you. Use
+                    the filters to find your perfect style.</p>
+
+                <!-- AI Search Bar -->
+                <div class="mb-6">
+                    <div class="relative">
+                        <input type="text" id="aiSearch"
+                            placeholder="Try: 'Show me casual summer outfits' or 'Find formal wear under $100'"
+                            class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <button id="aiSearchBtn"
+                            class="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-1.5 bg-blue-600 text-white rounded hover:bg-blue-700">
+                            🤖 Ask AI
+                        </button>
+                    </div>
+                    <div id="aiSuggestion" class="mt-2 text-sm text-blue-600 hidden"></div>
+                </div>
+
+                <div class="flex gap-6">
+                    <!-- Filters -->
+                    <div class="w-64 space-y-4">
+                        <!-- Size Filter -->
+                        <div>
+                            <button
+                                class="flex items-center justify-between w-full text-left font-medium text-gray-900 mb-3">
+                                <span>Size</span>
+                                <span>▼</span>
+                            </button>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-2 text-sm">
+                                    <input type="checkbox" class="filter-checkbox" data-filter="size" value="XS"> XS
+                                </label>
+                                <label class="flex items-center gap-2 text-sm">
+                                    <input type="checkbox" class="filter-checkbox" data-filter="size" value="S"> S
+                                </label>
+                                <label class="flex items-center gap-2 text-sm">
+                                    <input type="checkbox" class="filter-checkbox" data-filter="size" value="M"> M
+                                </label>
+                                <label class="flex items-center gap-2 text-sm">
+                                    <input type="checkbox" class="filter-checkbox" data-filter="size" value="L"> L
+                                </label>
+                                <label class="flex items-center gap-2 text-sm">
+                                    <input type="checkbox" class="filter-checkbox" data-filter="size" value="XL"> XL
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Color Filter -->
+                        <div>
+                            <button
+                                class="flex items-center justify-between w-full text-left font-medium text-gray-900 mb-3">
+                                <span>Color</span>
+                                <span>▼</span>
+                            </button>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-2 text-sm">
+                                    <input type="checkbox" class="filter-checkbox" data-filter="color" value="Red"> Red
+                                </label>
+                                <label class="flex items-center gap-2 text-sm">
+                                    <input type="checkbox" class="filter-checkbox" data-filter="color" value="Blue">
+                                    Blue
+                                </label>
+                                <label class="flex items-center gap-2 text-sm">
+                                    <input type="checkbox" class="filter-checkbox" data-filter="color" value="Black">
+                                    Black
+                                </label>
+                                <label class="flex items-center gap-2 text-sm">
+                                    <input type="checkbox" class="filter-checkbox" data-filter="color" value="White">
+                                    White
+                                </label>
+                                <label class="flex items-center gap-2 text-sm">
+                                    <input type="checkbox" class="filter-checkbox" data-filter="color" value="Cream">
+                                    Cream
+                                </label>
+                                <label class="flex items-center gap-2 text-sm">
+                                    <input type="checkbox" class="filter-checkbox" data-filter="color" value="Brown">
+                                    Brown
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Occasion Filter -->
+                        <div>
+                            <button
+                                class="flex items-center justify-between w-full text-left font-medium text-gray-900 mb-3">
+                                <span>Occasion</span>
+                                <span>▼</span>
+                            </button>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-2 text-sm">
+                                    <input type="checkbox" class="filter-checkbox" data-filter="occasion"
+                                        value="Casual"> Casual
+                                </label>
+                                <label class="flex items-center gap-2 text-sm">
+                                    <input type="checkbox" class="filter-checkbox" data-filter="occasion"
+                                        value="Formal"> Formal
+                                </label>
+                                <label class="flex items-center gap-2 text-sm">
+                                    <input type="checkbox" class="filter-checkbox" data-filter="occasion"
+                                        value="Everyday"> Everyday
+                                </label>
+                                <label class="flex items-center gap-2 text-sm">
+                                    <input type="checkbox" class="filter-checkbox" data-filter="occasion"
+                                        value="Sporty"> Sporty
+                                </label>
+                                <label class="flex items-center gap-2 text-sm">
+                                    <input type="checkbox" class="filter-checkbox" data-filter="occasion" value="Party">
+                                    Party
+                                </label>
+                                <label class="flex items-center gap-2 text-sm">
+                                    <input type="checkbox" class="filter-checkbox" data-filter="occasion"
+                                        value="Business"> Business
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Price Range -->
+                        <div>
+                            <button
+                                class="flex items-center justify-between w-full text-left font-medium text-gray-900 mb-3">
+                                <span>Price Range</span>
+                                <span>▼</span>
+                            </button>
+                            <div class="space-y-3">
+                                <input type="range" id="priceRange" min="0" max="250" value="250" class="w-full">
+                                <div class="flex justify-between text-sm text-gray-600">
+                                    <span>$0</span>
+                                    <span id="priceValue">$250</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button id="clearFilters"
+                            class="w-full py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50">
+                            Clear Filters
+                        </button>
+                    </div>
+
+                    <!-- Product Grid -->
+                    <div class="flex-1">
+                        <div class="flex justify-between items-center mb-4">
+                            <p class="text-sm text-gray-600"><span id="resultCount">9</span> items found</p>
+                            <select id="sortBy" class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                <option value="recommended">AI Recommended</option>
+                                <option value="price-low">Price: Low to High</option>
+                                <option value="price-high">Price: High to Low</option>
+                                <option value="newest">Newest First</option>
+                            </select>
+                        </div>
+
+                        <div id="loadingIndicator" class="hidden text-center py-12">
+                            <div
+                                class="inline-block w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full loading">
+                            </div>
+                            <p class="mt-4 text-gray-600">AI is analyzing your preferences...</p>
+                        </div>
+
+                        <div id="productGrid" class="grid grid-cols-3 gap-6">
+                            <!-- Products will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- AI Recommendation Modal -->
+    <div id="aiModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-auto p-6">
+            <div class="flex justify-between items-start mb-4">
+                <h3 class="text-xl font-bold text-gray-900">🤖 AI Style Recommendations</h3>
+                <button id="closeModal" class="text-gray-400 hover:text-gray-600 text-2xl">×</button>
+            </div>
+            <div id="aiModalContent" class="space-y-4"></div>
+        </div>
+    </div>
+
+    <script src="apparel.js"></script>
+</body>
+
+</html>
